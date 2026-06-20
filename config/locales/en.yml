@@ -1,0 +1,6 @@
+en:
+  solidus_mollie:
+    payment_error: "We couldn't start your Mollie payment: %{message}"
+    confirming_payment: "Thanks! We're confirming your payment with Mollie."
+    order_not_found: "Order not found."
+    redirect_notice: "You'll be redirected to Mollie to complete your payment securely."

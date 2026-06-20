@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# Build a full, runnable Solidus sandbox app under ./sandbox for manual testing.
+set -euo pipefail
+IFS=$'\n\t'
+
+test -z "${SOLIDUS_BRANCH:-}" && SOLIDUS_BRANCH="main"
+extension_name="solidus_mollie"
+
+rm -rf ./sandbox
+bundle exec rails new sandbox \
+  --database=sqlite3 \
+  --skip-bundle \
+  --skip-git \
+  --skip-keeps \
+  --skip-rc \
+  --skip-test \
+  --skip-spring \
+  --skip-javascript
+
+if [ ! -d "sandbox" ]; then
+  echo 'sandbox rails application failed to generate, exiting.'
+  exit 1
+fi
+
+cd ./sandbox
+cat <<RUBY >> Gemfile
+gem 'solidus', github: 'solidusio/solidus', branch: '$SOLIDUS_BRANCH'
+gem 'solidus_starter_frontend', github: 'solidusio/solidus_starter_frontend'
+gem '$extension_name', path: '..'
+
+group :test, :development do
+  platforms :mri do
+    gem 'pry-byebug'
+  end
+end
+RUBY
+
+bundle install --gemfile Gemfile
+bundle exec rails generate solidus:install --auto-accept --payment-method=none "$@"
+bundle exec rails generate solidus_mollie:install
+echo "Sandbox ready. cd sandbox && bin/rails server"

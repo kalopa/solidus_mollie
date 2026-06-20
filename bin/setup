@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+bundle install
+bin/rake extension:test_app
+echo "Done. Run 'bin/rake' (or 'bundle exec rspec') to run the specs."
