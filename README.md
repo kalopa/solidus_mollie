@@ -1,5 +1,7 @@
 # solidus_mollie
 
+[![Gem Version](https://badge.fury.io/rb/solidus_mollie.svg)](https://badge.fury.io/rb/solidus_mollie)
+
 Accept [Mollie](https://www.mollie.com) payments in your [Solidus](https://solidus.io)
 store using Mollie's **hosted checkout** (the buyer is redirected to Mollie to pay)
 and **webhooks** for settlement.
