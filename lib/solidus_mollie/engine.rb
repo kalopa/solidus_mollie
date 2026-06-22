@@ -10,14 +10,12 @@ module SolidusMollie
     # so helpers resolve as spree.mollie_webhook_url / spree.mollie_return_url.
 
     # Register the payment method so it appears in the admin "New Payment Method"
-    # provider dropdown.
-    initializer 'solidus_mollie.register_payment_method' do |app|
-      app.reloader.to_prepare do
-        methods = Rails.application.config.spree.payment_methods
-        methods << SolidusMollie::PaymentMethod unless methods.include?(SolidusMollie::PaymentMethod)
-      rescue StandardError => e
-        Rails.logger.warn("[solidus_mollie] could not auto-register payment method: #{e.message}")
-      end
+    # provider dropdown. Runs right after core populates its defaults; the string
+    # form avoids autoloading the model during boot and survives code reloads
+    # (config.spree.payment_methods is a ClassConstantizer::Set that constantizes
+    # on read and dedupes inserts).
+    initializer 'solidus_mollie.register_payment_method', after: 'spree.register.payment_methods' do |app|
+      app.config.spree.payment_methods << 'SolidusMollie::PaymentMethod'
     end
 
     # Prepend our checkout override so confirm-step orders paying with Mollie are
